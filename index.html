@@ -70,11 +70,6 @@
       font: inherit;
     }
 
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
     button {
       width: 100%;
       padding: 12px;
@@ -103,15 +98,6 @@
       border-radius: 8px;
       text-align: center;
       color: #084db2;
-      line-height: 1.5;
-    }
-
-    .warning {
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 6px;
-      background: #fff3cd;
-      color: #664d03;
       line-height: 1.5;
     }
 
@@ -192,22 +178,6 @@
         required
       />
 
-      <label for="signature">Digital Signature</label>
-      <input
-        id="signature"
-        name="signature"
-        type="text"
-        placeholder="Type your full name"
-        required
-      />
-
-      <label for="notes">Additional Notes</label>
-      <textarea
-        id="notes"
-        name="notes"
-        placeholder="Optional"
-      ></textarea>
-
       <label class="consent-row">
         <input id="consent" name="consent" type="checkbox" required />
         <span>
@@ -233,51 +203,36 @@
         </p>
       </div>
 
-      <label class="upload-label">Government-Issued ID — Front</label>
+      <label class="upload-label">
+        Government-Issued ID — Front
+      </label>
+
       <input
         type="hidden"
         role="uploadcare-uploader"
         name="id_front"
         data-clearable
         data-max-size="5242880"
+        data-images-only="true"
       />
 
-      <label class="upload-label">Government-Issued ID — Back</label>
+      <label class="upload-label">
+        Government-Issued ID — Back
+      </label>
+
       <input
         type="hidden"
         role="uploadcare-uploader"
         name="id_back"
         data-clearable
         data-max-size="5242880"
+        data-images-only="true"
       />
 
       <p class="note">
         Maximum file size: 5 MB per image. Upload these documents only when
         legally required and authorized for the verification process.
       </p>
-
-      <label for="documentType">Additional Document Type</label>
-      <select id="documentType" name="document_type">
-        <option value="">No additional document</option>
-        <option value="Resume">Resume</option>
-        <option value="Employment Reference">Employment Reference</option>
-        <option value="Authorization Form">Authorization Form</option>
-        <option value="Other">Other</option>
-      </select>
-
-      <label>Additional Supporting Document</label>
-      <input
-        type="hidden"
-        role="uploadcare-uploader"
-        name="supporting_document"
-        data-clearable
-        data-max-size="10485760"
-      />
-
-      <div class="warning">
-        EmailJS will receive only the submission details. ID images and file
-        URLs are not included in the email.
-      </div>
 
       <button id="submitBtn" type="submit">Submit</button>
     </form>
@@ -296,6 +251,7 @@
 
     let form1Data = {};
 
+    // Page 1 submission
     formPage1.addEventListener("submit", async (event) => {
       event.preventDefault();
 
@@ -307,8 +263,6 @@
         fullName: formPage1.fullName.value.trim(),
         email: formPage1.email.value.trim(),
         phone: formPage1.phone.value.trim(),
-        signature: formPage1.signature.value.trim(),
-        notes: formPage1.notes.value.trim(),
         consent: formPage1.consent.checked ? "Yes" : "No",
         submissionTime: new Date().toISOString()
       };
@@ -339,6 +293,7 @@
       }
     });
 
+    // Page 2 submission
     formPage2.addEventListener("submit", async (event) => {
       event.preventDefault();
 
@@ -346,10 +301,8 @@
         return;
       }
 
-      const idFront = formPage2.id_front.value.trim();
-      const idBack = formPage2.id_back.value.trim();
-      const supportingDocument =
-        formPage2.supporting_document.value.trim();
+      const idFront = formPage2.elements["id_front"].value.trim();
+      const idBack = formPage2.elements["id_back"].value.trim();
 
       if (!idFront || !idBack) {
         alert("Please upload both the front and back of your ID.");
@@ -360,21 +313,17 @@
       submitBtn.textContent = "Submitting...";
 
       /*
-        The uploaded files remain in Uploadcare.
-        Their URLs are not sent through EmailJS.
+        Uploaded files remain in Uploadcare.
+        Their URLs are not included in the EmailJS message.
       */
 
       const emailData = {
         fullName: form1Data.fullName,
         email: form1Data.email,
         phone: form1Data.phone,
-        signature: form1Data.signature,
-        notes: form1Data.notes,
-        document_type: formPage2.document_type.value || "None",
+        consent: form1Data.consent,
         id_front_uploaded: "Yes",
         id_back_uploaded: "Yes",
-        supporting_document_uploaded:
-          supportingDocument ? "Yes" : "No",
         submissionTime: new Date().toISOString()
       };
 
