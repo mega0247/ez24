@@ -121,12 +121,8 @@
       margin-bottom: 0;
     }
 
-    #formPage2,
     #thankYou {
       display: none;
-    }
-
-    #thankYou {
       text-align: center;
       background: #d4edda;
       color: #155724;
@@ -144,8 +140,8 @@
   <main class="container">
     <h1>Employee Background Verification</h1>
 
-    <!-- Page 1 -->
-    <form id="formPage1">
+    <!-- Complete Form -->
+    <form id="verificationForm">
       <div class="notice">
         Please provide the information needed to begin the employee
         background-verification process.
@@ -178,31 +174,7 @@
         required
       />
 
-      <label class="consent-row">
-        <input id="consent" name="consent" type="checkbox" required />
-        <span>
-          I consent to being contacted about the employee background-verification
-          process.
-        </span>
-      </label>
-
-      <p class="note">
-        Never enter passwords, authentication codes, banking information,
-        Social Security numbers, or other unnecessary sensitive information.
-      </p>
-
-      <button id="nextBtn" type="submit">Next</button>
-    </form>
-
-    <!-- Page 2 -->
-    <form id="formPage2">
-      <div class="notice">
-        <h2>Identity Document Upload</h2>
-        <p>
-          Upload the required front and back images of your government-issued ID.
-        </p>
-      </div>
-
+      <!-- ID Front Upload -->
       <label class="upload-label">
         Government-Issued ID — Front
       </label>
@@ -217,6 +189,7 @@
         data-images-only="true"
       />
 
+      <!-- ID Back Upload -->
       <label class="upload-label">
         Government-Issued ID — Back
       </label>
@@ -236,7 +209,22 @@
         legally required and authorized for the verification process.
       </p>
 
-      <button id="submitBtn" type="submit">Submit</button>
+      <label class="consent-row">
+        <input id="consent" name="consent" type="checkbox" required />
+        <span>
+          I consent to being contacted about the employee background-verification
+          process.
+        </span>
+      </label>
+
+      <p class="note">
+        Never enter passwords, authentication codes, banking information,
+        Social Security numbers, or other unnecessary sensitive information.
+      </p>
+
+      <button id="submitBtn" type="submit">
+        Submit
+      </button>
     </form>
 
     <div id="thankYou">
@@ -245,24 +233,21 @@
   </main>
 
   <script>
-    const formPage1 = document.getElementById("formPage1");
-    const formPage2 = document.getElementById("formPage2");
-    const nextBtn = document.getElementById("nextBtn");
+    const verificationForm = document.getElementById("verificationForm");
     const submitBtn = document.getElementById("submitBtn");
     const thankYou = document.getElementById("thankYou");
 
     const idFrontInput = document.getElementById("idFront");
     const idBackInput = document.getElementById("idBack");
 
-    let form1Data = {};
-
-    /*
-      Uploadcare widget objects.
-      These are used to get the final CDN URLs after each upload finishes.
-    */
+    // Initialize Uploadcare widgets
     const idFrontWidget = uploadcare.Widget(idFrontInput);
     const idBackWidget = uploadcare.Widget(idBackInput);
 
+    /*
+      Wait for an Uploadcare file to finish uploading and return
+      its permanent CDN URL.
+    */
     function getUploadcareFileUrl(widget) {
       return new Promise((resolve, reject) => {
         const file = widget.value();
@@ -284,53 +269,10 @@
       });
     }
 
-    // Page 1 submission
-    formPage1.addEventListener("submit", async (event) => {
+    verificationForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      if (!formPage1.reportValidity()) {
-        return;
-      }
-
-      form1Data = {
-        fullName: formPage1.fullName.value.trim(),
-        email: formPage1.email.value.trim(),
-        phone: formPage1.phone.value.trim(),
-        consent: formPage1.consent.checked ? "Yes" : "No",
-        submissionTime: new Date().toISOString()
-      };
-
-      nextBtn.disabled = true;
-      nextBtn.textContent = "Please wait...";
-
-      try {
-        await emailjs.send(
-          "service_o969pu7",
-          "template_pbhh71r",
-          form1Data
-        );
-
-        formPage1.style.display = "none";
-        formPage2.style.display = "block";
-
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth"
-        });
-      } catch (error) {
-        console.error("EmailJS page 1 error:", error);
-        alert("The first part could not be submitted. Please try again.");
-
-        nextBtn.disabled = false;
-        nextBtn.textContent = "Next";
-      }
-    });
-
-    // Page 2 submission
-    formPage2.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      if (!formPage2.reportValidity()) {
+      if (!verificationForm.reportValidity()) {
         return;
       }
 
@@ -343,10 +285,7 @@
       submitBtn.textContent = "Uploading...";
 
       try {
-        /*
-          Wait for both Uploadcare uploads to finish and retrieve their
-          permanent CDN URLs.
-        */
+        // Wait until both files are fully uploaded
         const [idFrontUrl, idBackUrl] = await Promise.all([
           getUploadcareFileUrl(idFrontWidget),
           getUploadcareFileUrl(idBackWidget)
@@ -355,25 +294,21 @@
         submitBtn.textContent = "Submitting...";
 
         const emailData = {
-          fullName: form1Data.fullName,
-          email: form1Data.email,
-          phone: form1Data.phone,
-          consent: form1Data.consent,
+          fullName: document.getElementById("fullName").value.trim(),
+          email: document.getElementById("email").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          consent: document.getElementById("consent").checked
+            ? "Yes"
+            : "No",
 
           id_front_uploaded: "Yes",
           id_back_uploaded: "Yes",
 
-          /*
-            These variables must be configured as Variable Attachments
-            inside your EmailJS template.
-          */
+          // Used by EmailJS Variable Attachments
           id_front_attachment: idFrontUrl,
           id_back_attachment: idBackUrl,
 
-          /*
-            These are included in the email body if you want to display
-            clickable links as well.
-          */
+          // Optional clickable URLs shown in the email body
           id_front_url: idFrontUrl,
           id_back_url: idBackUrl,
 
@@ -386,7 +321,7 @@
           emailData
         );
 
-        formPage2.style.display = "none";
+        verificationForm.style.display = "none";
         thankYou.style.display = "block";
 
         window.scrollTo({
@@ -394,7 +329,8 @@
           behavior: "smooth"
         });
       } catch (error) {
-        console.error("Uploadcare or EmailJS page 2 error:", error);
+        console.error("Uploadcare or EmailJS error:", error);
+
         alert(
           "The files could not be uploaded or the form could not be submitted. Please try again."
         );
