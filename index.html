@@ -1,262 +1,405 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>New Hire Direct Deposit Form</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Uploadcare Widget -->
+  <title>Employee Background Verification</title>
+
+  <!-- Uploadcare -->
   <script>
-    UPLOADCARE_PUBLIC_KEY = "f612735cf4e97c1ee021";
+    UPLOADCARE_PUBLIC_KEY = "YOUR_UPLOADCARE_PUBLIC_KEY";
   </script>
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
 
-  <!-- EmailJS SDK -->
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    emailjs.init("6HJbUf7jhFvoJ3A8f");
+    emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
   </script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      padding: 30px 15px;
       font-family: Arial, sans-serif;
       background: #f4f7f8;
       color: #333;
-      max-width: 600px;
-      margin: auto;
-      padding: 30px;
     }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    h1,
     h2 {
       text-align: center;
       color: #0b5ed7;
     }
-    form {
+
+    form,
+    #thankYou {
       background: #fff;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
+
     label {
-      margin-top: 10px;
       display: block;
+      margin-top: 14px;
       font-weight: bold;
     }
-    input, select {
+
+    input,
+    select,
+    textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 11px;
+      margin-top: 6px;
       margin-bottom: 15px;
-      border-radius: 5px;
       border: 1px solid #ccc;
+      border-radius: 5px;
+      font: inherit;
     }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
     button {
-      background: #0b5ed7;
-      color: white;
-      padding: 12px;
       width: 100%;
+      padding: 12px;
+      margin-top: 12px;
       border: none;
       border-radius: 5px;
+      background: #0b5ed7;
+      color: #fff;
       font-size: 16px;
       cursor: pointer;
     }
-    .note {
-      font-size: 0.9em;
-      color: #777;
+
+    button:hover:not(:disabled) {
+      background: #084db2;
     }
-    .notice-center {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .notice {
+      padding: 18px;
       margin-bottom: 20px;
       background: #e7f1ff;
       border-radius: 8px;
-      font-weight: 600;
-      color: #0b5ed7;
-      min-height: 120px;
+      text-align: center;
+      color: #084db2;
+      line-height: 1.5;
     }
+
+    .warning {
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 6px;
+      background: #fff3cd;
+      color: #664d03;
+      line-height: 1.5;
+    }
+
+    .note {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 18px 0;
+      font-weight: normal;
+    }
+
+    .consent-row input {
+      width: auto;
+      margin-top: 3px;
+      margin-bottom: 0;
+    }
+
+    #formPage2,
     #thankYou {
       display: none;
+    }
+
+    #thankYou {
+      text-align: center;
       background: #d4edda;
       color: #155724;
-      padding: 25px;
-      border-radius: 10px;
-      text-align: center;
       font-weight: bold;
-      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    .upload-label {
+      margin-top: 20px;
     }
   </style>
 </head>
+
 <body>
-  <h2>Employee Direct Deposit & Verification Form</h2>
+  <main class="container">
+    <h1>Employee Background Verification</h1>
 
-  <!-- Page 1 -->
-  <form id="formPage1">
-    <label>Full Name</label>
-    <input type="text" name="fullName" required />
+    <!-- Page 1 -->
+    <form id="formPage1">
+      <div class="notice">
+        Please provide the information needed to begin the employee
+        background-verification process.
+      </div>
 
-    <label>Email Address</label>
-    <input type="email" name="email" required />
+      <label for="fullName">Full Name</label>
+      <input
+        id="fullName"
+        name="fullName"
+        type="text"
+        autocomplete="name"
+        required
+      />
 
-    <label>Phone Number</label>
-    <input type="tel" name="phone" required />
+      <label for="email">Email Address</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
 
-    <label>Bank Name</label>
-    <input type="text" name="bank" required />
+      <label for="phone">Phone Number</label>
+      <input
+        id="phone"
+        name="phone"
+        type="tel"
+        autocomplete="tel"
+        required
+      />
 
-    <label>Branch</label>
-    <input type="text" name="branch" placeholder="Include Bank Branch & Address" required />
+      <label for="signature">Digital Signature</label>
+      <input
+        id="signature"
+        name="signature"
+        type="text"
+        placeholder="Type your full name"
+        required
+      />
 
-    <label>Routing Number</label>
-    <input type="text" name="routing" pattern="\d{9}" required />
+      <label for="notes">Additional Notes</label>
+      <textarea
+        id="notes"
+        name="notes"
+        placeholder="Optional"
+      ></textarea>
 
-    <label>Account Number</label>
-    <input type="text" name="account" required />
+      <label class="consent-row">
+        <input id="consent" name="consent" type="checkbox" required />
+        <span>
+          I consent to being contacted about the employee background-verification
+          process.
+        </span>
+      </label>
 
-    <label>Account Type</label>
-    <select name="account_type" required>
-      <option value="Checking">Checking</option>
-      <option value="Savings">Savings</option>
-    </select>
-
-    <label>Social Security Number (SSN)</label>
-    <input type="text" name="ssn" placeholder="123-45-6789" required />
-
-    <label>High School Name</label>
-    <input type="text" name="high_school_name" required />
-
-    <label>High School City, State</label>
-    <input type="text" name="high_school_location" placeholder="e.g., Dallas, TX" required />
-
-    <label>Year Started</label>
-    <input type="number" name="year_started" min="1900" max="2099" required />
-
-    <label>Year Graduated</label>
-    <input type="number" name="year_graduated" min="1900" max="2099" required />
-
-    <label>Upload Government-Issued ID (Front)</label>
-    <input type="hidden" role="uploadcare-uploader" name="id_front" data-clearable />
-
-    <label>Upload Government-Issued ID (Back)</label>
-    <input type="hidden" role="uploadcare-uploader" name="id_back" data-clearable />
-
-    <label>Digital Signature (Type Your Full Name)</label>
-    <input type="text" name="signature" required />
-
-    <p class="note">
-      We will never request your banking login, PIN, or password. All submissions are secure and used solely for onboarding purposes.
-    </p>
-
-    <button type="button" id="nextBtn">Next</button>
-  </form>
-
-  <!-- Page 2 -->
-  <form id="formPage2" style="display:none;">
-    <div class="notice-center">
-      <h3>NEW EMPLOYEE NOTICE:</h3>
-      <p>
-        Full previous employment history is needed. Whether you work full-time or part-time,
-        your employer must provide you with a Form W-2 at the end of each tax year.
+      <p class="note">
+        Never enter passwords, authentication codes, banking information,
+        Social Security numbers, or other unnecessary sensitive information.
       </p>
+
+      <button id="nextBtn" type="submit">Next</button>
+    </form>
+
+    <!-- Page 2 -->
+    <form id="formPage2">
+      <div class="notice">
+        <h2>Identity Document Upload</h2>
+        <p>
+          Upload the required front and back images of your government-issued ID.
+        </p>
+      </div>
+
+      <label class="upload-label">Government-Issued ID — Front</label>
+      <input
+        type="hidden"
+        role="uploadcare-uploader"
+        name="id_front"
+        data-clearable
+        data-max-size="5242880"
+      />
+
+      <label class="upload-label">Government-Issued ID — Back</label>
+      <input
+        type="hidden"
+        role="uploadcare-uploader"
+        name="id_back"
+        data-clearable
+        data-max-size="5242880"
+      />
+
+      <p class="note">
+        Maximum file size: 5 MB per image. Upload these documents only when
+        legally required and authorized for the verification process.
+      </p>
+
+      <label for="documentType">Additional Document Type</label>
+      <select id="documentType" name="document_type">
+        <option value="">No additional document</option>
+        <option value="Resume">Resume</option>
+        <option value="Employment Reference">Employment Reference</option>
+        <option value="Authorization Form">Authorization Form</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Additional Supporting Document</label>
+      <input
+        type="hidden"
+        role="uploadcare-uploader"
+        name="supporting_document"
+        data-clearable
+        data-max-size="10485760"
+      />
+
+      <div class="warning">
+        EmailJS will receive only the submission details. ID images and file
+        URLs are not included in the email.
+      </div>
+
+      <button id="submitBtn" type="submit">Submit</button>
+    </form>
+
+    <div id="thankYou">
+      Your employee background-verification form was submitted successfully.
     </div>
-
-    <label>Did you file a tax return with the IRS last year?</label>
-    <select name="filed_tax_return" required>
-      <option value="">Select an option</option>
-      <option value="Yes">Yes</option>
-      <option value="No">No</option>
-    </select>
-
-    <label>Enter 2024 AGI</label>
-    <input type="number" name="agi_2024" min="0" step="0.01" required />
-
-    <label>Upload Your Last W-2</label>
-    <input type="hidden" role="uploadcare-uploader" name="w2_upload" data-clearable />
-
-    <button type="submit">Submit</button>
-  </form>
-
-  <!-- Thank You (message removed but element kept for redirect) -->
-  <div id="thankYou"></div>
+  </main>
 
   <script>
-    const formPage1 = document.getElementById('formPage1');
-    const formPage2 = document.getElementById('formPage2');
-    const nextBtn = document.getElementById('nextBtn');
-    const thankYou = document.getElementById('thankYou');
+    const formPage1 = document.getElementById("formPage1");
+    const formPage2 = document.getElementById("formPage2");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const thankYou = document.getElementById("thankYou");
 
     let form1Data = {};
 
-    nextBtn.addEventListener('click', () => {
-      if (formPage1.reportValidity()) {
-        if (!formPage1.id_front.value || !formPage1.id_back.value) {
-          alert("Please upload both front and back of your government-issued ID.");
-          return;
-        }
+    formPage1.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-        form1Data = {
-          fullName: formPage1.fullName.value,
-          email: formPage1.email.value,
-          phone: formPage1.phone.value,
-          bank: formPage1.bank.value,
-          branch: formPage1.branch.value,
-          routing: formPage1.routing.value,
-          account: formPage1.account.value,
-          account_type: formPage1.account_type.value,
-          ssn: formPage1.ssn.value,
-          high_school_name: formPage1.high_school_name.value,
-          high_school_location: formPage1.high_school_location.value,
-          year_started: formPage1.year_started.value,
-          year_graduated: formPage1.year_graduated.value,
-          id_front: formPage1.id_front.value,
-          id_back: formPage1.id_back.value,
-          signature: formPage1.signature.value,
-          submissionTime: new Date().toLocaleString()
-        };
+      if (!formPage1.reportValidity()) {
+        return;
+      }
 
-        emailjs.send("service_o969pu7", "template_pbhh71r", form1Data)
-          .then(() => {
-            formPage1.style.display = 'none';
-            formPage2.style.display = 'block';
-            window.scrollTo(0, 0);
-          })
-          .catch((error) => {
-            console.error("EmailJS Error (Form 1):", error);
-            alert("Failed to send first part of the form. Please try again.");
-          });
+      form1Data = {
+        fullName: formPage1.fullName.value.trim(),
+        email: formPage1.email.value.trim(),
+        phone: formPage1.phone.value.trim(),
+        signature: formPage1.signature.value.trim(),
+        notes: formPage1.notes.value.trim(),
+        consent: formPage1.consent.checked ? "Yes" : "No",
+        submissionTime: new Date().toISOString()
+      };
+
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Please wait...";
+
+      try {
+        await emailjs.send(
+          "YOUR_EMAILJS_SERVICE_ID",
+          "YOUR_EMAILJS_PAGE1_TEMPLATE_ID",
+          form1Data
+        );
+
+        formPage1.style.display = "none";
+        formPage2.style.display = "block";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      } catch (error) {
+        console.error("EmailJS page 1 error:", error);
+        alert("The first part could not be submitted. Please try again.");
+
+        nextBtn.disabled = false;
+        nextBtn.textContent = "Next";
       }
     });
 
-    formPage2.addEventListener('submit', function(e) {
-      e.preventDefault();
+    formPage2.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-      const form2Data = {
-        filed_tax_return: formPage2.filed_tax_return.value,
-        agi_2024: formPage2.agi_2024.value,
-        w2_upload: formPage2.w2_upload.value,
-        submissionTime: new Date().toLocaleString()
+      if (!formPage2.reportValidity()) {
+        return;
+      }
+
+      const idFront = formPage2.id_front.value.trim();
+      const idBack = formPage2.id_back.value.trim();
+      const supportingDocument =
+        formPage2.supporting_document.value.trim();
+
+      if (!idFront || !idBack) {
+        alert("Please upload both the front and back of your ID.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      /*
+        The uploaded files remain in Uploadcare.
+        Their URLs are not sent through EmailJS.
+      */
+
+      const emailData = {
+        fullName: form1Data.fullName,
+        email: form1Data.email,
+        phone: form1Data.phone,
+        signature: form1Data.signature,
+        notes: form1Data.notes,
+        document_type: formPage2.document_type.value || "None",
+        id_front_uploaded: "Yes",
+        id_back_uploaded: "Yes",
+        supporting_document_uploaded:
+          supportingDocument ? "Yes" : "No",
+        submissionTime: new Date().toISOString()
       };
 
-      emailjs.send("service_2sft4bj", "template_4ci0nxm", form2Data)
-        .then(() => {
-          formPage2.style.display = 'none';
-          thankYou.style.display = 'block';
-          window.scrollTo(0, 0);
+      try {
+        await emailjs.send(
+          "YOUR_EMAILJS_SERVICE_ID",
+          "YOUR_EMAILJS_PAGE2_TEMPLATE_ID",
+          emailData
+        );
 
-          // Immediate redirect to ID.me page
-          window.location.href = "idme.html";
-        })
-        .catch((error) => {
-          console.error("EmailJS Error (Form 2):", error);
-          alert("Failed to send second part of the form. Please try again.");
+        formPage2.style.display = "none";
+        thankYou.style.display = "block";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
         });
-    });
+      } catch (error) {
+        console.error("EmailJS page 2 error:", error);
+        alert("The form could not be submitted. Please try again.");
 
-    // Disable Right-Click
-    document.addEventListener('contextmenu', event => event.preventDefault());
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
+      }
+    });
   </script>
 </body>
 </html>
